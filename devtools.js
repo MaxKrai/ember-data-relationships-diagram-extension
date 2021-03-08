@@ -1,7 +1,3 @@
-const backgroundPageConnection = chrome.runtime.connect({
-  name: 'devtools-page'
-});
-
 const onPanelShown = (window) => {
   chrome.devtools.inspectedWindow.eval(functionToExpressionString(extract), function (result, error) {
     window.emberModelsConfig = result;

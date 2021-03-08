@@ -19,7 +19,10 @@ It supports few "graph types":
 In short the `hierarchy` mode uses different nodes for the same models in different branches. The `graph` uses only 1 node for 1 model.
 Let's take a look at 2 examples of models from Ember.js Blog.
 
-[Include images here]
+### Graph
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-graph-extension/blob/images/graph.PNG?raw=true)
+### Hierarchy
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-graph-extension/blob/images/hierarchy.PNG?raw=true)
 
 It supports 3 display modes:
 * Breadthfirst (preferred for hierarchy)
