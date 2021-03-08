@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		html, body {
+			margin: 0;
+			height: 100%;
+		}
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			background-color: #ffffff;
+		}
+		.container, .graph {
+			height: 100%;
+		}
+		.container {
+			display: flex;
+		}
+		.graph {
+			flex-grow: 1;
+		}
+		.panel {
+			width: 300px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel">
+			<div class="form-row">
+				<label for="graph-type">Choose a graph type:</label>
+
+				<select name="graphType" id="graph-type-select">
+					<option value="">--Please choose an option--</option>
+					<option value="hierarchy">Hierarchy</option>
+					<option value="graph">Graph</option>
+				</select>
+			</div>
+			<div class="form-row">
+				<label for="display-type">Choose a display type:</label>
+
+				<select name="displayType" id="display-type-select">
+					<option value="">--Please choose an option--</option>
+					<option value="circle">Circle</option>
+					<option value="concentric">Concentric Circle</option>
+					<option value="breadthfirst">Breadthfirst</option>
+				</select>
+			</div>
+			<div>
+				<strong>[Hierarchy mode]</strong>
+			</div>
+			<div class="form-row">
+				<label for="root-model-inp">Use model as root: </label>
+				<input type="text" name="rootModel" id="root-model-inp">
+			</div>
+			<div>
+				<strong>[Graph mode]</strong>
+			</div>
+			<div class="form-row">
+				<label for="filter-model-inp">Use filter: </label>
+				<input type="text" name="filterModel" id="filter-model-inp">
+			</div>
+			<div class="form-row">
+				<input type="checkbox" id="show-connections-count" name="connections-count">
+ 				<label for="show-connections-count">Show connections count</label>
+			</div>
+			<div class="form-row">
+				<button id="visualize-btn">Visualize</button>
+			</div>
+		</div>
+		<div class="graph" id="graph"></div>
+	</div>
+	<script src="lib/cytoscape.min.js"></script>
+	<script src="src/build-graph.js"></script>
+	<script src="src/render-graph.js"></script>
+	<script src="src/ui.js"></script>
+</body>
+</html>
