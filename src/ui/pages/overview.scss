@@ -1,0 +1,13 @@
+.overview-page {
+	display: flex;
+	height: 100%;
+
+	.panel {
+		width: 300px;
+	}
+
+	.view {
+		flex-grow: 1;
+		height: 100%;
+	}
+}
