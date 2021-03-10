@@ -8,8 +8,12 @@ This is in POC status now.
 ## Installation
 It is not published in the Chrome Web Store yet.
 
-Nothing needs to be built at the moment.
 You can load unpacked extension to Chrome in developer mode.
+
+```bash
+npm install
+npm run build
+```
 
 ## Usage
 It supports few "graph types":
@@ -33,6 +37,7 @@ Keep in mind that for `hierarchy` mode it is needed to provide root model name.
 
 As well as in `graph` mode it is possible to use filter string that works as `modelName.includes(filterStr)`. Also you can render a count of actual relationships in this mode (3 links to some model will be rendered as 3 connections).
 
+The red colored connections are `async` and blue are `sync`.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
