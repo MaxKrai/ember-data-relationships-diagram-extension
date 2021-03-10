@@ -1,7 +1,7 @@
 # ember-data-relationships-graph-extension
 The Chrome extension allows you to render relationships graph based on ember-data models.
 It supports common graph and hierarchy graph rendering.
-It's powered by Cytoscape.js v3.16.0.
+It's powered by [Cytoscape.js](https://js.cytoscape.org/) and 3kB [Preact](https://preactjs.com/).
 
 This is in POC status now.
 
