@@ -4,45 +4,45 @@ interface Attribute {
 }
 
 interface Relationship {
-	key: string,
-	kind: 'hasMany' | 'belongsTo',
-	linkTo: string,
-	async: boolean,
-	inverse: boolean
+  key: string,
+  kind: 'hasMany' | 'belongsTo',
+  linkTo: string,
+  async: boolean,
+  inverse: boolean
 }
 
 export interface ModelDescriptor {
-	attributes: Array<Attribute>,
-	relationships: Array<Relationship>
+  attributes: Array<Attribute>,
+  relationships: Array<Relationship>
 }
 
 export type ModelDescriptorMap = { [key: string]: ModelDescriptor }
 
 export enum GraphType {
-	graph = 'graph',
-	hierarchy = 'hierarchy'
+  graph = 'graph',
+  hierarchy = 'hierarchy'
 }
 
 export enum DisplayType {
-	circle = 'circle',
-	concentric = 'concentric',
-	breadthfirst = 'breadthfirst'
+  circle = 'circle',
+  concentric = 'concentric',
+  breadthfirst = 'breadthfirst'
 }
 
 export interface OverviewForm {
-	type: GraphType,
-	displayType: DisplayType,
-	rootModel: string,
-	filter: string,
-	showConnectionsCount: boolean
+  type: GraphType,
+  displayType: DisplayType,
+  rootModel: string,
+  filter: string,
+  showConnectionsCount: boolean
 }
 
 export interface GraphNode {
-	data: { id: string }
+  data: { id: string }
 }
 
 export interface GraphEdge {
-	data: { id: string, source: string, target: string }
+  data: { id: string, source: string, target: string }
 }
 
 export type GraphData = Array<GraphNode|GraphType>;
