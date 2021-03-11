@@ -25,7 +25,7 @@ function onPanelShown (window) {
 chrome.devtools.panels.create(
   'Ember Models Graph',
   null,
-  'ext/panel.html',
+  'panel.html',
   (extensionPanel) => {
     extensionPanel.onShown.addListener(onPanelShown);
   }
