@@ -74,7 +74,6 @@ export default function (): { error?: string, data?: ModelDescriptorMap } {
     };
   });
 
-  console.log(models);
   return {
     data: models
   };

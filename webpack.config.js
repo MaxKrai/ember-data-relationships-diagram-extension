@@ -7,7 +7,7 @@ module.exports = {
 		devtools: './src/devtools.ts'
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'chrome-extension/dist'),
     filename: '[name].js'
   },
   module: {
