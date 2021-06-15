@@ -3,7 +3,7 @@ html, body {
 	height: 100%;
 }
 
-#root, .app {
+#root, .graph {
 	height: 100%;
 }
 
@@ -12,4 +12,13 @@ html, body {
 }
 body {
 	background-color: #ffffff;
+}
+
+#root {
+	position: relative;
+}
+
+.panel {
+	position: fixed;
+	right: 0;
 }

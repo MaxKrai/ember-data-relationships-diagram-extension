@@ -3,7 +3,7 @@ interface Attribute {
   type: string
 }
 
-interface Relationship {
+export interface Relationship {
   key: string,
   kind: 'hasMany' | 'belongsTo',
   linkTo: string,
@@ -18,31 +18,5 @@ export interface ModelDescriptor {
 
 export type ModelDescriptorMap = { [key: string]: ModelDescriptor }
 
-export enum GraphType {
-  graph = 'graph',
-  hierarchy = 'hierarchy'
-}
+export type ProjectConfig = { error?: string, data?: ModelDescriptorMap }
 
-export enum DisplayType {
-  circle = 'circle',
-  concentric = 'concentric',
-  breadthfirst = 'breadthfirst'
-}
-
-export interface OverviewForm {
-  type: GraphType,
-  displayType: DisplayType,
-  rootModel: string,
-  filter: string,
-  showConnectionsCount: boolean
-}
-
-export interface GraphNode {
-  data: { id: string }
-}
-
-export interface GraphEdge {
-  data: { id: string, source: string, target: string }
-}
-
-export type GraphData = Array<GraphNode|GraphType>;
