@@ -1,7 +1,7 @@
-# ember-data-relationships-graph-extension
-The Chrome extension allows you to render relationships graph based on ember-data models.
-It supports common graph and hierarchy graph rendering.
-It's powered by [Cytoscape.js](https://js.cytoscape.org/) and 3kB [Preact](https://preactjs.com/).
+# ember-data-relationships-diagram-extension
+The Chrome extension allows you to render relationships class diagram based on ember-data models.
+
+It's powered by [mermaid](https://github.com/mermaid-js/mermaid).
 
 This is in POC status now.
 
@@ -16,28 +16,29 @@ npm run build
 ```
 
 ## Usage
-It supports few "graph types":
-* hierarchy
-* graph.
+Open devtools and go to tab `Ember Models Diagram`
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-diagram.PNG?raw=true)
+You can scale the page using special range input.
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-zoom.PNG?raw=true)
+It's available to define specific model. In this case only related models will be rendered on a diagram.
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-specific-model.PNG?raw=true)
+You can save svg-based diagram as html file.
 
-In short the `hierarchy` mode uses different nodes for the same models in different branches. The `graph` uses only 1 node for 1 model.
-Let's take a look at 2 examples of models from Ember.js Blog.
+## Key Features
+* It reads all Ember Data models registered in your Ember application at the time the dev tab was opened.
+It means that it processes any models that come via common way with any structure, from addons or via dynamic registration.
+* You can place all models on diagram
 
-### Graph
-![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-graph-extension/blob/images/graph.PNG?raw=true)
-### Hierarchy
-![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-graph-extension/blob/images/hierarchy.PNG?raw=true)
+## Things to improve
+* Add polymorphic support
+* Merge origin + inverse relationships to single one
+* Visualize async/sync relationships and other stuff
+* Add export support of mermaid diagram source text
+* UI/UX updates
 
-It supports 3 display modes:
-* Breadthfirst (preferred for hierarchy)
-* Circle
-* Concentric Circle
-
-Keep in mind that for `hierarchy` mode it is needed to provide root model name.
-
-As well as in `graph` mode it is possible to use filter string that works as `modelName.includes(filterStr)`. Also you can render a count of actual relationships in this mode (3 links to some model will be rendered as 3 connections).
-
-The red colored connections are `async` and blue are `sync`.
+## Known Issues
+* It doesn't render models without attributes and relationships
+* No polymorphic support
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

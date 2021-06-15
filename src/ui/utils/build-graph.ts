@@ -1,163 +1,51 @@
-import { ModelDescriptorMap, GraphNode, GraphEdge, ModelDescriptor } from '../../interfaces';
+import { ModelDescriptorMap, Relationship } from '../../interfaces';
+import { transformModelName } from './common';
 
-export interface GraphData {
-  nodes: Array<GraphNode>,
-  edges: Array<GraphEdge>,
-  rootModelName?: string
+/*
+classDiagram
+class `Tag` {
+  +String name
+  +String image
+  +Array<Content> posts
 }
 
-interface ChildNodeInfo {
-  hash: TreeMapNode,
-  relFromParentToHash: {
-    from: string,
-    to: string,
-    kind: 'hasMany' | 'belongsTo',
-    key: string,
-    inverse: boolean,
-    async: boolean
-  }
+Tag "0" o-- "*" Content : posts
+
+class `Content` {
+  +String title
+  +Object canonical
 }
 
-interface ParentNodeInfo {
-  hash: TreeMapNode,
-  key: string
-}
-
-interface TreeMapNode {
-  children: Array<ChildNodeInfo>,
-  data: ModelDescriptor,
-  parent: Array<ParentNodeInfo>
-}
-
-export type TreeMap = { [key: string]: TreeMapNode }
-
-const SEP = '#';
-
-/**
- *
- * @param {Array} models 
+`Content` "0" o-- "*" `Tag`
  */
-export function makeTree (models: ModelDescriptorMap): TreeMap {
-  const hash = {};
-  Object.keys(models).forEach(modelName => {
-    const model = models[modelName];
-    if (!hash[modelName]) {
-      hash[modelName] = {
-        data: model,
-        parent: []
-      };
-    } else if (!hash[modelName].data) {
-      hash[modelName].data = model;
-    }
-    hash[modelName].children = model.relationships.map(relationship => {
-      if (!hash[relationship.linkTo]) {
-        hash[relationship.linkTo] = { parent: [] };
-      }
 
-      hash[relationship.linkTo].parent.push({
-        key: relationship.key,
-        hash: model
-      });
+const INDENT = '  ';
 
-      return {
-        relFromParentToHash: {
-          from: modelName,
-          to: relationship.linkTo,
-          kind: relationship.kind,
-          key: relationship.key,
-          async: relationship.async,
-          inverse: relationship.inverse
-        },
-        hash: hash[relationship.linkTo]
-      };
-    })
-  });
-  console.log(hash);
-  return hash;
+function processRelationshipType (relationship: Relationship) {
+  const linkTo = transformModelName(relationship.linkTo);
+  const type = relationship.kind === 'hasMany' ? `Array<${linkTo}>` : linkTo;
+  return `+${type} ${relationship.key}`;
 }
 
-interface BuildGraphOptions {
-  showRelationshipsQuantity?: boolean,
-  filter(modelName: string, descriptor: ModelDescriptor, index: number): boolean
-}
-
-// 1 model type - 1 graph node
-export function buildGraph (models: ModelDescriptorMap, options: BuildGraphOptions): GraphData {
-  const edges = [];
-  const nodes = [];
-
-  Object.keys(models).forEach((modelName, index) => {
-    if (!options.filter(modelName, models[modelName], index)) {
+export function buildGraph (map: ModelDescriptorMap) {
+  let result = '';
+  Object.keys(map).forEach(originModelName => {
+    const modelName = transformModelName(originModelName);
+    const descriptor = map[originModelName];
+    if (descriptor.attributes.length === 0 && descriptor.relationships.length === 0) {
       return;
     }
 
-    nodes.push({
-      data: { id: modelName }
-    });
-
-    if (models[modelName].relationships.length > 0) {
-      models[modelName].relationships.forEach((relationship, relIndex)   => {
-
-        const id = options.showRelationshipsQuantity ? `${modelName}${relationship.linkTo}/${index}/${relIndex}` : `${modelName}${relationship.linkTo}`;
-        edges.push({
-          data: {
-            id,
-            source: modelName,
-            target: relationship.linkTo,
-            inverse: relationship.inverse,
-            async: relationship.async
-          }
-        });
-      })
-    }
+    const attributes = descriptor.attributes.map(attr => `${INDENT}+${attr.type || 'object'} ${attr.key}`).join('\n');
+    const relationshipAttrs = descriptor.relationships.map(rel => `${INDENT}${processRelationshipType(rel)}`).join('\n');
+    result += `class \`${modelName}\` {\n${attributes}\n${relationshipAttrs}\n}`;
+    const relationships = descriptor.relationships.map(rel => {
+      const to = transformModelName(rel.linkTo);
+      const multiplicity = rel.kind === 'hasMany' ? '*' : '0..1';
+      return `\`${modelName}\` "" o-- "${multiplicity}" \`${to}\``
+    }).join('\n');
+    result += `\n${relationships}\n`;
   });
 
-  return { edges, nodes };
-}
-
-export function buildHierarchyGraph (rootModel: string, rootNode: TreeMapNode): GraphData {
-  const nodes = [];
-  const edges = [];
-
-  const extractRelations = (type: string, node: TreeMapNode, key = '', prevNodeId = '', circularController = {}) => {
-    const nodeId = `${prevNodeId}${SEP}${key}${SEP}${type}`;
-    nodes.push({
-      data: { id: nodeId, name: type }
-    });
-
-    circularController = {
-      ...circularController,
-      [type]: nodeId
-    };
-
-    node.children.forEach(extendedNode => {
-      const { relFromParentToHash: rel, hash } = extendedNode;
-
-      const targetNodeId = circularController[rel.to] ||
-				`${nodeId}${SEP}${rel.key}${SEP}${rel.to}`;
-      edges.push({
-        data: {
-          id: `rel: ${nodeId}${SEP}${rel.key}${SEP}${rel.to}`,
-          source: nodeId,
-          target: targetNodeId,
-
-          kind: rel.kind,
-          async: rel.async,
-          inverse: rel.inverse
-        }
-      });
-
-      if (!circularController[rel.to]) {
-        extractRelations(rel.to, hash, rel.key, nodeId, circularController);
-      }
-    });
-  };
-
-  extractRelations(rootModel, rootNode);
-
-  return {
-    nodes,
-    edges,
-    rootModelName: `${SEP}${SEP}${rootModel}`
-  };
+  return `classDiagram\n${result}`;
 }

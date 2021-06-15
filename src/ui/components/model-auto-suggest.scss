@@ -1,0 +1,25 @@
+.model-auto-suggest {
+  .search-field {
+    width: 300px;
+  }
+
+  //.search-field:focus + .model-selector {
+  //  display: block;
+  //}
+
+  .model-selector {
+    display: block;
+    width: 100%;
+  }
+
+  .item {
+    height: 25px;
+    padding: 5px;
+    cursor: pointer;
+    border-top: 1px solid #000;
+
+    &:last-child {
+      border-bottom: 1px solid #000;
+    }
+  }
+}

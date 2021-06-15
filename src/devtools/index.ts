@@ -23,7 +23,7 @@ function onPanelShown (window) {
 
 // eslint-disable-next-line no-undef
 chrome.devtools.panels.create(
-  'Ember Models Graph',
+  'Ember Models Diagram',
   null,
   'panel.html',
   (extensionPanel) => {
