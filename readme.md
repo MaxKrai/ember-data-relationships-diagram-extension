@@ -17,11 +17,16 @@ npm run build
 
 ## Usage
 Open devtools and go to tab `Ember Models Diagram`
-![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-diagram.PNG?raw=true)
+
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/diagram-demo.png?raw=true)
+
 You can scale the page using special range input.
-![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-zoom.PNG?raw=true)
+
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-zoom.png?raw=true)
+
 It's available to define specific model. In this case only related models will be rendered on a diagram.
-![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-specific-model.PNG?raw=true)
+
+![Image of Graph](https://github.com/MaxKrai/ember-data-relationships-diagram-extension/blob/images/demo-specific-model.png?raw=true)
 You can save svg-based diagram as html file.
 
 ## Key Features
