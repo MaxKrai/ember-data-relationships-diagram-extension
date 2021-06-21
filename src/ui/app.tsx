@@ -3,24 +3,34 @@ import { useEffect, useState } from 'preact/hooks';
 import Mermaid from './components/mermaid';
 import ScaleSlider from './components/scale-slider';
 import ModelAutoSuggest from './components/model-auto-suggest';
-
 import { waitFor } from './utils/common';
-import { ProjectConfig } from '../interfaces';
+import { DataConfig, ModelsConfig } from '../interfaces';
 import { save } from './utils/save-html-file';
 import { includeEverythingRelatedTo } from './utils/filtering';
+import { makeInheritanceTree } from './utils/inheritance-tree';
 
 import './app.scss';
 
 const App: FunctionComponent = function () {
-  const [fullMap, setFullMap] = useState(null);
+  const [config, setConfig] = useState<ModelsConfig>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [scale, setScale] = useState(1);
   const [specificModel, setSpecificModel] = useState('');
 
-  const map = specificModel === '' ?
-    fullMap :
-    includeEverythingRelatedTo(specificModel, fullMap);
-  const models = Object.keys(fullMap || {});
+  const allDescriptors = config?.descriptors;
+  let descriptors = allDescriptors;
+  let inheritanceMap = config?.inheritanceMap;
+  if (specificModel !== '') {
+    const included = includeEverythingRelatedTo(
+      specificModel,
+      descriptors,
+      inheritanceMap,
+      makeInheritanceTree(inheritanceMap)
+    );
+    descriptors = included.descriptors;
+    inheritanceMap = included.inheritanceMap;
+  }
+  const models = Object.keys(allDescriptors || {});
 
   const onSaveHtmlClick = (e) => {
     e.preventDefault();
@@ -32,11 +42,11 @@ const App: FunctionComponent = function () {
   };
 
   useEffect(() => {
-    waitFor<ProjectConfig>(window, 'EMBER_MODELS_GRAPH').then(({ error, data }) => {
+    waitFor<DataConfig>(window, 'EMBER_MODELS_GRAPH').then(({ error, data }) => {
       if (error) {
         setErrorMsg(error);
       } else {
-        setFullMap(data);
+        setConfig(data);
       }
     });
   });
@@ -53,7 +63,7 @@ const App: FunctionComponent = function () {
       <ModelAutoSuggest onChange={onModelChange} pool={models} />
       <button onClick={onSaveHtmlClick}>Save as html file</button>
     </div>
-    {map && <Mermaid map={map} scale={scale} />}
+    {descriptors && <Mermaid map={descriptors} inheritanceMap={inheritanceMap} scale={scale} />}
     {errorMsg && <span>{errorMsg}</span>}
   </div>);
 };

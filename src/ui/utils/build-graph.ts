@@ -1,4 +1,4 @@
-import { ModelDescriptorMap, Relationship } from '../../interfaces';
+import { InheritanceMap, ModelDescriptor, ModelDescriptorMap, Relationship } from '../../interfaces';
 import { transformModelName } from './common';
 
 /*
@@ -20,6 +20,7 @@ class `Content` {
  */
 
 const INDENT = '  ';
+const DEFAULT_TYPE = 'object';
 
 function processRelationshipType (relationship: Relationship) {
   const linkTo = transformModelName(relationship.linkTo);
@@ -27,25 +28,56 @@ function processRelationshipType (relationship: Relationship) {
   return `+${type} ${relationship.key}`;
 }
 
-export function buildGraph (map: ModelDescriptorMap) {
+function processAttributes (descriptor: ModelDescriptor) {
+  const attributes = descriptor.attributes.map(attr => `${INDENT}+${attr.type || DEFAULT_TYPE} ${attr.key}`).join('\n');
+  const relationshipAttrs = descriptor.relationships.map(rel => `${INDENT}${processRelationshipType(rel)}`).join('\n');
+
+  return { attributes, relationshipAttrs };
+}
+
+function processRelationships (primaryModelName, descriptor: ModelDescriptor) {
+  return descriptor.relationships.map(rel => {
+    const to = transformModelName(rel.linkTo);
+    const multiplicity = rel.kind === 'hasMany' ? '*' : '0..1';
+    return `\`${primaryModelName}\` "" o-- "${multiplicity}" \`${to}\``
+  }).join('\n');
+}
+
+function processInheritance (superModels: { [key: string]: string[] }) {
+  const result = [];
+  Object.keys(superModels).map(superModel => {
+    const extended = superModels[superModel];
+    const parent = transformModelName(superModel);
+    extended.forEach(extendedModel => {
+      if (extendedModel !== superModel) {
+        result.push(`\`${parent}\` <|-- \`${transformModelName(extendedModel)}\``);
+      }
+    });
+  });
+
+  return result.join('\n')
+}
+
+export function buildGraph (map: ModelDescriptorMap, inheritanceMap: InheritanceMap): string {
   let result = '';
+
   Object.keys(map).forEach(originModelName => {
     const modelName = transformModelName(originModelName);
     const descriptor = map[originModelName];
+
     if (descriptor.attributes.length === 0 && descriptor.relationships.length === 0) {
-      return;
+      descriptor.attributes.push({ key: 'model', type: 'empty' });
     }
 
-    const attributes = descriptor.attributes.map(attr => `${INDENT}+${attr.type || 'object'} ${attr.key}`).join('\n');
-    const relationshipAttrs = descriptor.relationships.map(rel => `${INDENT}${processRelationshipType(rel)}`).join('\n');
+    const { attributes, relationshipAttrs } = processAttributes(descriptor);
     result += `class \`${modelName}\` {\n${attributes}\n${relationshipAttrs}\n}`;
-    const relationships = descriptor.relationships.map(rel => {
-      const to = transformModelName(rel.linkTo);
-      const multiplicity = rel.kind === 'hasMany' ? '*' : '0..1';
-      return `\`${modelName}\` "" o-- "${multiplicity}" \`${to}\``
-    }).join('\n');
+
+    const relationships = processRelationships(modelName, descriptor);
     result += `\n${relationships}\n`;
   });
+
+  const inheritance = processInheritance(inheritanceMap);
+  result += `\n${inheritance}\n`;
 
   return `classDiagram\n${result}`;
 }

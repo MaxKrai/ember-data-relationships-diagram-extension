@@ -1,11 +1,11 @@
-function toPascalCase (val: string) {
+function toPascalCase (val: string): string {
   return val.replace(
     /(.)(.*)/g,
     (_, leading, rest) => `${leading.toUpperCase()}${rest.toLowerCase()}`);
 }
 
 // some-module/item -> SomeModule_Item
-export function transformModelName (modelName: string) {
+export function transformModelName (modelName: string): string {
   return modelName.split('/').map(chunk => {
     return chunk.split('-').map(chunkItem => toPascalCase(chunkItem)).join('');
   }).join('_');
@@ -19,7 +19,7 @@ function sleep (timeout: number): Promise<void> {
   });
 }
 
-export async function waitFor<T> (obj: any, key: string, timeout = 5000): Promise<T> {
+export async function waitFor<T> (obj: Record<string, any>, key: string, timeout = 5000): Promise<T> {
   let timer = 0;
   const tick = 200;
   while (!obj[key] && timer <= timeout) {
@@ -28,16 +28,4 @@ export async function waitFor<T> (obj: any, key: string, timeout = 5000): Promis
   }
 
   return obj[key];
-}
-
-export function debounce (cb, interval: number) {
-  let timerId = null;
-  return function () {
-    const cbArguments = arguments;
-    clearTimeout(timerId);
-    timerId = setTimeout(() => {
-      // @ts-ignore
-      cb(...cbArguments);
-    }, interval);
-  }
 }

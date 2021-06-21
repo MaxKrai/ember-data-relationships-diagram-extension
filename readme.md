@@ -32,18 +32,15 @@ You can save svg-based diagram as html file.
 ## Key Features
 * It reads all Ember Data models registered in your Ember application at the time the dev tab was opened.
 It means that it processes any models that come via common way with any structure, from addons or via dynamic registration.
-* You can place all models on diagram
+* It represents `@hasMany`, `@belongsTo` and `extends` relationships between models.
+* You can place all models on the diagram, or you can choose some model to visualize everything related to.
 
 ## Things to improve
-* Add polymorphic support
+* Add polymorphic indicator
 * Merge origin + inverse relationships to single one
 * Visualize async/sync relationships and other stuff
 * Add export support of mermaid diagram source text
 * UI/UX updates
-
-## Known Issues
-* It doesn't render models without attributes and relationships
-* No polymorphic support
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

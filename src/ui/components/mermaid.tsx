@@ -1,16 +1,17 @@
 import { h, FunctionComponent } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import mermaid from 'mermaid';
-import { ModelDescriptorMap } from '../../interfaces';
+import { InheritanceMap, ModelDescriptorMap } from '../../interfaces';
 import { buildGraph } from '../utils/build-graph';
 import { MERMAID_CONFIG } from '../config';
 
 interface MermaidProps {
   map: ModelDescriptorMap,
-  scale: number
+  scale: number,
+  inheritanceMap: InheritanceMap
 }
 
-const Mermaid: FunctionComponent<MermaidProps> = function ({ map, scale }) {
+const Mermaid: FunctionComponent<MermaidProps> = function ({ map, inheritanceMap, scale }) {
   const container = useRef(null);
   const graph = useRef(null);
 
@@ -39,7 +40,7 @@ const Mermaid: FunctionComponent<MermaidProps> = function ({ map, scale }) {
     element.id = 'graph-svg';
     container.current.appendChild(element);
 
-    const source = buildGraph(map);
+    const source = buildGraph(map, inheritanceMap);
 
     try {
       mermaid.mermaidAPI.render('graph-svg', source, insertGraph);
@@ -50,7 +51,7 @@ const Mermaid: FunctionComponent<MermaidProps> = function ({ map, scale }) {
     } catch (e) {
       console.log(e);
     }
-  }, [container, map]);
+  }, [container, map, inheritanceMap]);
 
   useEffect(() => {
     const maxWidth = document.getElementById('graph-svg').style.maxWidth;
